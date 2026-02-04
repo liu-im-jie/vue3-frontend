@@ -53,7 +53,7 @@ const menuItems = computed(() => transformMenu(currentSideMenus.value))
 			width="220"
 			:trigger="null"
 			collapsible
-			class="bottom-0 left-0 top-0 z-10 pt-[48px] shadow-md !fixed !bg-white dark:!bg-[#001529]"
+			class="bottom-0 left-0 top-0 z-11 pt-[48px] shadow-md !fixed !bg-white dark:!bg-[#001529]"
 		>
 			<div class="h-full overflow-y-auto pb-12">
 				<a-menu

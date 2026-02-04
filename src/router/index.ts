@@ -6,7 +6,7 @@ import { createRouterGuards } from './guard'
 import { whiteNameList } from '@/constants/router'
 
 export const router = createRouter({
-	history: createWebHistory(import.meta.env.VITE_APP_BASE_URL),
+	history: createWebHistory(),
 	routes: basicRoutes,
 	scrollBehavior: () => ({ left: 0, top: 0 })
 })
