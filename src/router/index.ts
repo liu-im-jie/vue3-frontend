@@ -3,7 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { basicRoutes } from './routes'
 import type { App } from 'vue'
 import { createRouterGuards } from './guard'
-import { whiteNameList } from '@/constants/router'
+import { ROOT_NAME, whiteNameList } from '@/constants/router'
 
 export const router = createRouter({
 	history: createWebHistory(),
@@ -14,7 +14,7 @@ export const router = createRouter({
 export function resetRouter() {
 	router.getRoutes().forEach((route) => {
 		const { name } = route
-		if (name && !whiteNameList.includes(name as any)) {
+		if (name && !(whiteNameList.includes(name as any) || ROOT_NAME === name)) {
 			router.hasRoute(name) && router.removeRoute(name)
 		}
 	})

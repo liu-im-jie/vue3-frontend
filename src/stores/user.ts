@@ -23,6 +23,7 @@ export const useUserStore = defineStore(
 			try {
 				const res = await loginApi(params)
 				setToken(res.token)
+				await afterLogin()
 				return res
 			} catch (error) {
 				return Promise.reject(error)
