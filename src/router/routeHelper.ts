@@ -54,3 +54,21 @@ export function transformRoutes(routes: any[]): RouteRecordRaw[] {
 
 	return routeList
 }
+
+/**
+ * 获取第一个有效的路由名称
+ * @param routes 路由列表
+ */
+export function findFirstValidRouteName(routes: RouteRecordRaw[]): string | undefined {
+	for (const route of routes) {
+		if (route.meta?.hideInMenu) continue
+
+		if (route.children && route.children.length > 0) {
+			const name = findFirstValidRouteName(route.children)
+			if (name) return name
+		} else {
+			if (route.name) return route.name as string
+		}
+	}
+	return undefined
+}

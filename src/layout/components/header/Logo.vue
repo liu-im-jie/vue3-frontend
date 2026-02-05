@@ -13,13 +13,17 @@ const titleStyle = computed(() => ({
 <template>
 	<div
 		class="h-full flex items-center justify-start overflow-hidden bg-white pl-4 transition-all duration-300 dark:bg-[#001529]"
-		:style="{ width: settingStore.menuCollapsed ? '70px' : '200px' }"
+		:style="{
+			width: settingStore.menuCollapsed ? '70px' : 'auto',
+			minWidth: settingStore.menuCollapsed ? '70px' : '200px',
+			paddingRight: settingStore.menuCollapsed ? '0' : '16px'
+		}"
 	>
 		<img src="@/assets/logo/logo.png" alt="logo" class="h-8 w-8 flex-shrink-0 object-contain" />
 
 		<h1
 			v-show="!settingStore.menuCollapsed"
-			class="m-0 ml-3 flex-shrink-0 truncate text-lg font-bold leading-[48px] transition-colors duration-300"
+			class="m-0 ml-3 flex-shrink-0 whitespace-nowrap text-lg font-bold leading-[48px] transition-colors duration-300"
 			:style="titleStyle"
 		>
 			{{ title }}

@@ -1,0 +1,74 @@
+<script lang="ts" setup>
+import { Form, Row } from 'ant-design-vue'
+import { omit, pick } from 'lodash-es'
+import FormAction from './components/form-action.vue'
+import { createFormContext, useAdvanced, useFormMethods, useFormState } from './hooks/'
+import { aFormPropKeys, schemaFormEmits, schemaFormProps } from './schema-form'
+import SchemaFormItem from './schema-form-item.vue'
+
+defineOptions({
+	name: 'SchemaForm'
+})
+
+const props = defineProps(schemaFormProps)
+const emit = defineEmits(schemaFormEmits)
+
+// 表单内部状态
+const formState = useFormState(props)
+const { formModel, getRowConfig, schemaFormRef, getFormProps, getFormActionBindProps, formPropsRef } = formState
+
+// 表单内部方法
+const formMethods = useFormMethods({ formState, emit })
+const { handleEnterPress, setDefaultValue } = formMethods
+
+/** 当前组件所有的状态和方法 */
+const schemaFormContext = {
+	props,
+	emit,
+	...formState,
+	...formMethods
+}
+/** 创建表单上下文 */
+createFormContext(schemaFormContext)
+
+// 搜索表单 展开/收起 表单项hooks
+const { handleToggleAdvanced } = useAdvanced({ formState, emit })
+
+emit('register', schemaFormContext)
+
+defineExpose(schemaFormContext)
+
+// 初始化表单默认值
+setDefaultValue((formPropsRef.value as Recordable).schemas)
+</script>
+
+<template>
+	<Form
+		ref="schemaFormRef"
+		v-bind="omit(pick(getFormProps, aFormPropKeys), ['onSubmit'])"
+		:model="formModel"
+		@keypress.enter="handleEnterPress"
+	>
+		<Row v-bind="getRowConfig">
+			<slot name="formHeader" />
+			<slot>
+				<template v-for="schemaItem in formPropsRef.schemas" :key="schemaItem.field">
+					<SchemaFormItem v-model:form-model="formModel" :schema="schemaItem" />
+				</template>
+				<FormAction
+					v-if="showActionButtonGroup"
+					v-bind="getFormActionBindProps"
+					@toggle-advanced="handleToggleAdvanced"
+				>
+					<template
+						v-for="item in ['resetBefore', 'submitBefore', 'advanceBefore', 'advanceAfter']"
+						#[item]="data"
+					>
+						<slot :name="item" v-bind="data || {}" />
+					</template>
+				</FormAction>
+			</slot>
+			<slot name="formFooter" />
+		</Row>
+	</Form>
+</template>

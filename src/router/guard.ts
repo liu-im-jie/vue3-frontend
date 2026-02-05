@@ -4,6 +4,7 @@ import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
 import { useUserStore } from '@/stores/user'
 import { whiteNameList, LOGIN_NAME } from '@/constants/router'
+import { findFirstValidRouteName } from './routeHelper'
 
 NProgress.configure({ showSpinner: false })
 
@@ -16,12 +17,22 @@ export function createRouterGuards(router: Router) {
 
 		if (token) {
 			if (to.name === LOGIN_NAME) {
-				next({ path: '/dashboard' })
+				const firstRouteName = findFirstValidRouteName(userStore.menus)
+				if (firstRouteName) {
+					next({ name: firstRouteName })
+				} else {
+					next({ path: '/' })
+				}
 				NProgress.done()
 			} else {
 				if (userStore.isDynamicAddedMenu) {
 					if (to.path === '/' && to.name === 'Root') {
-						next({ path: '/dashboard', replace: true })
+						const firstRouteName = findFirstValidRouteName(userStore.menus)
+						if (firstRouteName) {
+							next({ name: firstRouteName, replace: true })
+						} else {
+							next()
+						}
 					} else {
 						next()
 					}
@@ -29,7 +40,12 @@ export function createRouterGuards(router: Router) {
 					try {
 						await userStore.afterLogin()
 						if (to.path === '/') {
-							next({ path: '/dashboard', replace: true })
+							const firstRouteName = findFirstValidRouteName(userStore.menus)
+							if (firstRouteName) {
+								next({ name: firstRouteName, replace: true })
+							} else {
+								next({ path: '/dashboard', replace: true })
+							}
 						} else {
 							next({ ...to, replace: true })
 						}

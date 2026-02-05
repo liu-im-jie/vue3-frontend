@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useSettingStore } from '@/stores/setting'
 import { PRESET_COLORS } from '@/constants/theme'
-import SvgIcon from '@/components/base/SvgIcon/index.vue'
+import SvgIcon from '@/components/base/svg-icon/index.vue'
 
 const settingStore = useSettingStore()
 const visible = ref(false)
