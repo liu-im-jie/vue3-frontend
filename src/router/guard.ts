@@ -25,7 +25,7 @@ export function createRouterGuards(router: Router) {
 				}
 				NProgress.done()
 			} else {
-				if (userStore.isDynamicAddedMenu) {
+				if (userStore.isDynamicAddedMenu && userStore.menus.length > 0) {
 					if (to.path === '/' && to.name === 'Root') {
 						const firstRouteName = findFirstValidRouteName(userStore.menus)
 						if (firstRouteName) {

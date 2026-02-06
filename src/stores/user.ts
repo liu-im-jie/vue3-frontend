@@ -1,7 +1,7 @@
 import type { LoginParams, UserInfo } from '@/api/model/auth'
 import { LOGIN_NAME } from '@/constants/router'
 import router, { resetRouter } from '@/router'
-import { transformRoutes } from '@/router/routeHelper'
+import { flattenRoutes } from '@/router/routeHelper'
 import { PageNotFoundRoute } from '@/router/routes'
 import { useTabsStore } from '@/stores/tabs'
 import type { RouteRecordRaw } from 'vue-router'
@@ -11,8 +11,7 @@ export const useUserStore = defineStore(
 	() => {
 		const token = ref<string>('')
 		const userInfo = ref<UserInfo | null>(null)
-		const menus = ref<RouteRecordRaw[]>([])
-		// 动态路由是否加载完成
+		const menus = ref<Partial<RouteRecordRaw>[]>([])
 		const isDynamicAddedMenu = ref<boolean>(false)
 
 		const setToken = (t: string) => {
@@ -41,37 +40,52 @@ export const useUserStore = defineStore(
 				const info = await getUserInfoApi()
 				userInfo.value = info
 
-				const backendResult = [
+				const menuData: RouteRecordRaw[] = [
 					{
 						path: '/dashboard',
 						name: 'Dashboard',
-						component: 'dashboard/index',
-						meta: { title: '仪表盘', icon: 'ant-design:dashboard-outlined' },
-						children: []
+						meta: {
+							title: '仪表盘',
+							icon: 'ant-design:dashboard-outlined',
+							order: 1,
+							componentPath: 'dashboard/index'
+						}
 					},
 					{
 						path: '/system',
 						name: 'System',
-						component: 'Layout',
-						meta: { title: '系统管理', icon: 'ant-design:setting-outlined' },
+						meta: {
+							title: '系统管理',
+							icon: 'ant-design:setting-outlined',
+							order: 2
+						},
 						children: [
 							{
-								path: 'user',
+								path: '/system/user',
 								name: 'SystemUser',
-								component: 'system/user/index',
-								meta: { title: '用户管理', icon: 'ant-design:user-outlined' }
+								meta: {
+									title: '用户管理',
+									icon: 'ant-design:user-outlined',
+									order: 1,
+									componentPath: 'system/user/index'
+								}
 							},
 							{
-								path: 'role',
+								path: '/system/role',
 								name: 'SystemRole',
-								component: 'system/role/index',
-								meta: { title: '角色管理', icon: 'ant-design:team-outlined' }
+								meta: {
+									title: '角色管理',
+									icon: 'ant-design:team-outlined',
+									order: 2,
+									componentPath: 'system/role/index'
+								}
 							}
 						]
 					}
 				]
-				const routeList = transformRoutes(backendResult)
-				menus.value = routeList
+
+				menus.value = menuData
+				const routeList = flattenRoutes(menuData)
 
 				routeList.forEach((route) => {
 					router.addRoute('Root', route)

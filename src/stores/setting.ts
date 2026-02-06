@@ -64,6 +64,8 @@ export const useSettingStore = defineStore(
 		}
 	},
 	{
-		persist: true
+		persist: {
+			pick: ['isDark', 'colorPrimary', 'menuCollapsed', 'showTabs', 'showFooter', 'activeTopMenu']
+		}
 	}
 )

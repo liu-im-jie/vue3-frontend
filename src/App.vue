@@ -1,4 +1,12 @@
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import { useSettingStore } from '@/stores/setting'
+
+const settingStore = useSettingStore()
+
+watchEffect(() => {
+	document.documentElement.style.setProperty('--primary-color', settingStore.colorPrimary)
+})
+</script>
 
 <template>
 	<ProConfigProvider>

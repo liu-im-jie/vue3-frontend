@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { useRoute } from 'vue-router'
 import Header from './components/header/index.vue'
 import Sider from './components/sider/index.vue'
 import TabsView from './components/tabs/index.vue'
@@ -6,9 +7,12 @@ import { useSettingStore } from '@/stores/setting'
 import { useUserStore } from '@/stores/user'
 import { useTabsStore } from '@/stores/tabs'
 
+const route = useRoute()
 const settingStore = useSettingStore()
 const userStore = useUserStore()
 const tabsStore = useTabsStore()
+
+const componentKey = computed(() => `${String(route.name || route.path)}-${tabsStore.refreshKey}`)
 
 // 判断是否有侧边栏
 const hasSideMenu = computed(() => {
@@ -49,14 +53,14 @@ const copyright = import.meta.env.VITE_COPYRIGHT || 'Copyright © 2026 Your Comp
 				width: `calc(100% - ${contentPaddingLeft})`
 			}"
 		>
-			<div class="flex-1 p-4">
-				<div v-if="settingStore.contentLoading" class="p-4">
+			<div class="relative flex-1 p-4">
+				<div v-if="settingStore.contentLoading" class="absolute inset-0 z-10 bg-white p-4 dark:bg-gray-900">
 					<a-skeleton active :paragraph="{ rows: 8 }" />
 				</div>
-				<router-view v-else v-slot="{ Component }">
+				<router-view v-slot="{ Component }">
 					<transition name="page-fade" mode="out-in">
 						<keep-alive :include="tabsStore.cachedViews">
-							<component :is="Component" :key="tabsStore.refreshKey" />
+							<component :is="Component" :key="componentKey" />
 						</keep-alive>
 					</transition>
 				</router-view>

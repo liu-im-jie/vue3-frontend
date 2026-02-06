@@ -100,12 +100,16 @@ const handleRefresh = async (e: MouseEvent) => {
 
 	isRefreshing.value = true
 	settingStore.contentLoading = true
-	await tabsStore.refreshCurrentTab(tabsStore.activeTab)
+
+	tabsStore.refreshCurrentTab(tabsStore.activeTab)
+
+	await nextTick()
+	tabsStore.addToCache(tabsStore.activeTab)
 
 	setTimeout(() => {
 		isRefreshing.value = false
 		settingStore.contentLoading = false
-	}, 600)
+	}, 500)
 }
 
 // 监听路由变化，自动添加标签
@@ -220,9 +224,15 @@ watch(
 
 			&-active {
 				background: #fff !important;
-				/* 修改点：去除 font-weight: 500 */
 				.ant-tabs-tab-btn {
 					color: var(--tabs-primary-color) !important;
+				}
+				.ant-tabs-tab-remove {
+					color: var(--tabs-primary-color) !important;
+					&:hover {
+						color: var(--tabs-primary-color) !important;
+						opacity: 0.7;
+					}
 				}
 			}
 		}
@@ -246,6 +256,13 @@ watch(
 
 			&-active {
 				background: #141414 !important;
+				.ant-tabs-tab-remove {
+					color: var(--tabs-primary-color) !important;
+					&:hover {
+						color: var(--tabs-primary-color) !important;
+						opacity: 0.7;
+					}
+				}
 			}
 		}
 	}

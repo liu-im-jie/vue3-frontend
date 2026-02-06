@@ -35,3 +35,15 @@ export interface RoleInfo {
 	status: number
 	remark?: string
 }
+
+// 路由信息
+export interface RouteInfo {
+	name: string
+	title: string
+	router: string
+	comPath: string
+	order: number
+	icon?: string
+	type: number
+	children: RouteInfo[]
+}

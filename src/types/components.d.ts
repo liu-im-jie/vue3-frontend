@@ -1,4 +1,3 @@
-/* eslint-disable */
 // @ts-nocheck
 // biome-ignore lint: disable
 // oxlint-disable
@@ -24,14 +23,19 @@ declare module 'vue' {
     AMenu: typeof import('ant-design-vue/es')['Menu']
     AMenuDivider: typeof import('ant-design-vue/es')['MenuDivider']
     AMenuItem: typeof import('ant-design-vue/es')['MenuItem']
+    ApiSelect: typeof import('./../components/core/schema-form/src/components/ApiSelect.vue')['default']
     ASkeleton: typeof import('ant-design-vue/es')['Skeleton']
     ASpace: typeof import('ant-design-vue/es')['Space']
     ATabPane: typeof import('ant-design-vue/es')['TabPane']
     ATabs: typeof import('ant-design-vue/es')['Tabs']
     ATooltip: typeof import('ant-design-vue/es')['Tooltip']
-    ProConfigProvider: typeof import('./../components/base/ProConfigProvider/index.vue')['default']
+    BasicHelp: typeof import('./../components/base/basic-help/index.vue')['default']
+    FormAction: typeof import('./../components/core/schema-form/src/components/form-action.vue')['default']
+    ProConfigProvider: typeof import('./../components/base/pro-config-provider/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
-    SvgIcon: typeof import('./../components/base/SvgIcon/index.vue')['default']
+    SchemaForm: typeof import('./../components/core/schema-form/src/schema-form.vue')['default']
+    SchemaFormItem: typeof import('./../components/core/schema-form/src/schema-form-item.vue')['default']
+    SvgIcon: typeof import('./../components/base/svg-icon/index.vue')['default']
   }
 }

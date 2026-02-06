@@ -23,6 +23,36 @@ const hasSideMenu = computed(() => currentSideMenus.value.length > 0)
 const selectedKeys = computed(() => [route.name as string])
 const openKeys = ref<string[]>([])
 
+// 根据当前路由名称查找其所有父级菜单的 key，用于自动展开
+const findParentKeys = (menus: RouteRecordRaw[], targetName: string, parents: string[] = []): string[] | null => {
+	for (const menu of menus) {
+		if (menu.name === targetName) {
+			return parents
+		}
+		if (menu.children && menu.children.length > 0) {
+			const result = findParentKeys(menu.children, targetName, [...parents, menu.name as string])
+			if (result) return result
+		}
+	}
+	return null
+}
+
+// 当路由变化时，自动展开对应的父级菜单
+watch(
+	() => route.name,
+	(routeName) => {
+		if (routeName && currentSideMenus.value.length > 0) {
+			const parentKeys = findParentKeys(currentSideMenus.value, routeName as string)
+			if (parentKeys && parentKeys.length > 0) {
+				// 合并现有的 openKeys 和新的 parentKeys，避免收起其他已展开的菜单
+				const newOpenKeys = [...new Set([...openKeys.value, ...parentKeys])]
+				openKeys.value = newOpenKeys
+			}
+		}
+	},
+	{ immediate: true }
+)
+
 const handleClick = ({ key }: { key: string | number }) => {
 	router.push({ name: String(key) })
 }
@@ -53,9 +83,9 @@ const menuItems = computed(() => transformMenu(currentSideMenus.value))
 			width="220"
 			:trigger="null"
 			collapsible
-			class="bottom-0 left-0 top-0 z-11 pt-[48px] shadow-md !fixed !bg-white dark:!bg-[#001529]"
+			class="bottom-0 left-0 top-0 z-11 flex flex-col overflow-hidden pt-[48px] shadow-md !fixed !bg-white dark:!bg-[#001529]"
 		>
-			<div class="h-full overflow-y-auto pb-12">
+			<div class="flex-1 overflow-y-auto">
 				<a-menu
 					v-model:selected-keys="selectedKeys"
 					v-model:open-keys="openKeys"
@@ -67,7 +97,7 @@ const menuItems = computed(() => transformMenu(currentSideMenus.value))
 			</div>
 
 			<div
-				class="absolute bottom-0 h-12 w-full flex cursor-pointer items-center justify-center border-t border-gray-100 bg-white transition-colors dark:border-gray-700 dark:bg-[#001529] hover:bg-gray-50 dark:hover:bg-gray-800"
+				class="h-12 w-full flex shrink-0 cursor-pointer items-center justify-center border-t border-gray-100 bg-white transition-colors dark:border-gray-700 dark:bg-[#001529] hover:bg-gray-50 dark:hover:bg-gray-800"
 				@click="settingStore.toggleMenuCollapsed"
 			>
 				<Icon
@@ -82,7 +112,13 @@ const menuItems = computed(() => transformMenu(currentSideMenus.value))
 </template>
 
 <style scoped>
-/* 侧边栏进出动画 */
+:deep(.ant-layout-sider-children) {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	overflow: hidden;
+}
+
 .sider-slide-enter-active,
 .sider-slide-leave-active {
 	transition:

@@ -1,8 +1,8 @@
 <script setup lang="ts">
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useSettingStore } from '@/stores/setting'
 import { useUserStore } from '@/stores/user'
 import { Icon } from '@iconify/vue'
-import type { RouteLocationMatched } from 'vue-router'
 
 const router = useRouter()
 const route = useRoute()
@@ -23,15 +23,48 @@ const topMenus = computed(() => {
 	}))
 })
 
+const findTopMenuByRouteName = (routeName: string): string | undefined => {
+	const findInChildren = (children: any[]): boolean => {
+		for (const child of children) {
+			if (child.name === routeName) return true
+			if (child.children && child.children.length > 0) {
+				if (findInChildren(child.children)) return true
+			}
+		}
+		return false
+	}
+
+	for (const topMenu of userStore.menus) {
+		// 如果顶级菜单本身就是这个路由
+		if (topMenu.name === routeName) return topMenu.name as string
+		// 在子菜单中查找
+		if (topMenu.children && findInChildren(topMenu.children)) {
+			return topMenu.name as string
+		}
+	}
+	return undefined
+}
+
 watch(
-	() => route.matched,
-	(matched: RouteLocationMatched[]) => {
-		if (matched.length > 1) {
-			settingStore.setActiveTopMenu(matched[1]?.name as string)
+	() => route.name,
+	(routeName) => {
+		if (routeName && userStore.menus.length > 0) {
+			const topMenuKey = findTopMenuByRouteName(routeName as string)
+			if (topMenuKey) {
+				settingStore.setActiveTopMenu(topMenuKey)
+			}
 		}
 	},
 	{ immediate: true }
 )
+
+// 递归查找第一个有效的叶子节点路由名称
+const findFirstLeafRouteName = (menu: any): string | undefined => {
+	if (menu.children && menu.children.length > 0) {
+		return findFirstLeafRouteName(menu.children[0])
+	}
+	return menu.name as string
+}
 
 const handleMenuClick = (menuKey: string) => {
 	const menu = userStore.menus.find((item) => item.name === menuKey)
@@ -41,14 +74,10 @@ const handleMenuClick = (menuKey: string) => {
 
 	settingStore.setActiveTopMenu(menuKey)
 
-	if (menu.children && menu.children.length > 0) {
-		router.push({
-			name: menu.children[0]?.name as string
-		})
-	} else {
-		router.push({
-			name: menuKey as string
-		})
+	// 找到第一个叶子节点
+	const targetRouteName = findFirstLeafRouteName(menu)
+	if (targetRouteName) {
+		router.push({ name: targetRouteName })
 	}
 }
 </script>
