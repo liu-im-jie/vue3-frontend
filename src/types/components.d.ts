@@ -15,6 +15,7 @@ declare module 'vue' {
     ACard: typeof import('ant-design-vue/es')['Card']
     ADrawer: typeof import('ant-design-vue/es')['Drawer']
     ADropdown: typeof import('ant-design-vue/es')['Dropdown']
+    AFloatButton: typeof import('ant-design-vue/es')['FloatButton']
     AForm: typeof import('ant-design-vue/es')['Form']
     AFormItem: typeof import('ant-design-vue/es')['FormItem']
     AInput: typeof import('ant-design-vue/es')['Input']
@@ -28,6 +29,7 @@ declare module 'vue' {
     ASpace: typeof import('ant-design-vue/es')['Space']
     ATabPane: typeof import('ant-design-vue/es')['TabPane']
     ATabs: typeof import('ant-design-vue/es')['Tabs']
+    ATextarea: typeof import('ant-design-vue/es')['Textarea']
     ATooltip: typeof import('ant-design-vue/es')['Tooltip']
     BasicHelp: typeof import('./../components/base/basic-help/index.vue')['default']
     FormAction: typeof import('./../components/core/schema-form/src/components/form-action.vue')['default']
@@ -36,6 +38,8 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     SchemaForm: typeof import('./../components/core/schema-form/src/schema-form.vue')['default']
     SchemaFormItem: typeof import('./../components/core/schema-form/src/schema-form-item.vue')['default']
+    Smartservice: typeof import('./../components/smartservice/index.vue')['default']
+    SmartService: typeof import('./../components/SmartService/index.vue')['default']
     SvgIcon: typeof import('./../components/base/svg-icon/index.vue')['default']
   }
 }

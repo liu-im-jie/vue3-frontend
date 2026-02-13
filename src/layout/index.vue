@@ -3,6 +3,7 @@ import { useRoute } from 'vue-router'
 import Header from './components/header/index.vue'
 import Sider from './components/sider/index.vue'
 import TabsView from './components/tabs/index.vue'
+import SmartService from '@/components/smartservice/index.vue'
 import { useSettingStore } from '@/stores/setting'
 import { useUserStore } from '@/stores/user'
 import { useTabsStore } from '@/stores/tabs'
@@ -73,6 +74,9 @@ const copyright = import.meta.env.VITE_COPYRIGHT || 'Copyright © 2026 Your Comp
 				{{ copyright }}
 			</footer>
 		</main>
+
+		<!-- 智能客服 -->
+		<SmartService />
 	</div>
 </template>
 
