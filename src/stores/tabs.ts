@@ -15,8 +15,17 @@ export const useTabsStore = defineStore(
 	() => {
 		const tabs = ref<TabItem[]>([])
 		const activeTab = ref<string>('')
-		const cachedViews = ref<string[]>([])
+		const _cachedViews = ref<string[]>([])
 		const refreshKey = ref(0)
+
+		// 始终包含 ParentRouteContainer，确保父容器不被销毁
+		const cachedViews = computed(() => {
+			const views = [..._cachedViews.value]
+			if (!views.includes('ParentRouteContainer')) {
+				views.push('ParentRouteContainer')
+			}
+			return views
+		})
 
 		const addTab = (route: RouteLocationNormalized) => {
 			const { name, path, meta } = route
@@ -37,8 +46,8 @@ export const useTabsStore = defineStore(
 
 			activeTab.value = tabName
 
-			if (!cachedViews.value.includes(tabName)) {
-				cachedViews.value.push(tabName)
+			if (!_cachedViews.value.includes(tabName)) {
+				_cachedViews.value.push(tabName)
 			}
 		}
 
@@ -51,9 +60,9 @@ export const useTabsStore = defineStore(
 
 			tabs.value.splice(index, 1)
 
-			const cacheIndex = cachedViews.value.indexOf(tabName)
+			const cacheIndex = _cachedViews.value.indexOf(tabName)
 			if (cacheIndex > -1) {
-				cachedViews.value.splice(cacheIndex, 1)
+				_cachedViews.value.splice(cacheIndex, 1)
 			}
 
 			if (activeTab.value === tabName && tabs.value.length > 0) {
@@ -65,7 +74,7 @@ export const useTabsStore = defineStore(
 
 		const closeOtherTabs = (tabName: string) => {
 			tabs.value = tabs.value.filter((tab) => tab.name === tabName || tab.affix)
-			cachedViews.value = tabs.value.map((tab) => tab.name)
+			_cachedViews.value = tabs.value.map((tab) => tab.name)
 			activeTab.value = tabName
 		}
 
@@ -75,8 +84,8 @@ export const useTabsStore = defineStore(
 				const closedTabs = tabs.value.slice(0, index).filter((tab) => !tab.affix)
 				tabs.value = tabs.value.filter((tab, i) => i >= index || tab.affix)
 				closedTabs.forEach((tab) => {
-					const cacheIndex = cachedViews.value.indexOf(tab.name)
-					if (cacheIndex > -1) cachedViews.value.splice(cacheIndex, 1)
+					const cacheIndex = _cachedViews.value.indexOf(tab.name)
+					if (cacheIndex > -1) _cachedViews.value.splice(cacheIndex, 1)
 				})
 			}
 		}
@@ -87,29 +96,29 @@ export const useTabsStore = defineStore(
 				const closedTabs = tabs.value.slice(index + 1).filter((tab) => !tab.affix)
 				tabs.value = tabs.value.filter((tab, i) => i <= index || tab.affix)
 				closedTabs.forEach((tab) => {
-					const cacheIndex = cachedViews.value.indexOf(tab.name)
-					if (cacheIndex > -1) cachedViews.value.splice(cacheIndex, 1)
+					const cacheIndex = _cachedViews.value.indexOf(tab.name)
+					if (cacheIndex > -1) _cachedViews.value.splice(cacheIndex, 1)
 				})
 			}
 		}
 
 		const closeAllTabs = () => {
 			tabs.value = tabs.value.filter((tab) => tab.affix)
-			cachedViews.value = tabs.value.map((tab) => tab.name)
+			_cachedViews.value = tabs.value.map((tab) => tab.name)
 			return tabs.value[0]?.path || '/assert/main'
 		}
 
 		const refreshCurrentTab = (tabName: string) => {
-			const cacheIndex = cachedViews.value.indexOf(tabName)
+			const cacheIndex = _cachedViews.value.indexOf(tabName)
 			if (cacheIndex > -1) {
-				cachedViews.value.splice(cacheIndex, 1)
+				_cachedViews.value.splice(cacheIndex, 1)
 			}
 			refreshKey.value++
 		}
 
 		const addToCache = (tabName: string) => {
-			if (!cachedViews.value.includes(tabName)) {
-				cachedViews.value.push(tabName)
+			if (!_cachedViews.value.includes(tabName)) {
+				_cachedViews.value.push(tabName)
 			}
 		}
 
@@ -119,7 +128,7 @@ export const useTabsStore = defineStore(
 
 		const resetTabs = () => {
 			tabs.value = []
-			cachedViews.value = []
+			_cachedViews.value = []
 			activeTab.value = ''
 		}
 
@@ -142,7 +151,8 @@ export const useTabsStore = defineStore(
 	},
 	{
 		persist: {
-			pick: ['tabs', 'activeTab', 'cachedViews']
+			pick: ['tabs', 'activeTab', '_cachedViews']
+			// refreshKey 不需要持久化
 		}
 	}
 )

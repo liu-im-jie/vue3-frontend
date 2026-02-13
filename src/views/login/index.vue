@@ -33,7 +33,6 @@ const handleSubmit = async () => {
 		})
 	} else {
 		message.success('登录成功！')
-		// 跳转到根路径，路由守卫会处理 afterLogin 并加载动态路由后跳转到首页
 		router.replace('/')
 	}
 	loading.value = false
@@ -43,14 +42,14 @@ const handleSubmit = async () => {
 
 <template>
 	<div
-		class="login-container relative w-full flex flex-col items-center bg-[size:100%] bg-[url('@/assets/login.svg')] pt-200px dark:bg-[#141414]"
+		class="login-container relative min-h-screen w-full flex flex-col items-center justify-center bg-[length:100%_100%] bg-[url('@/assets/login.svg')] bg-center bg-no-repeat transition-colors duration-300 ease-in-out dark:bg-[#141414] dark:bg-none sm:bg-cover"
 	>
-		<div class="mb-30px flex items-center">
+		<div class="mb-8 flex items-center">
 			<img alt="logo" src="~@/assets/logo/logo.png" width="45" />
 			<h1 class="text-primary ml-2 text-3xl font-bold">{{ appTitle }}</h1>
 		</div>
 
-		<a-form :model="loginFormModel" class="w-400px" layout="horizontal" @submit.prevent="handleSubmit">
+		<a-form :model="loginFormModel" class="w-[400px]" layout="horizontal" @submit.prevent="handleSubmit">
 			<a-form-item>
 				<a-input v-model:value="loginFormModel.username" placeholder="用户名" size="large">
 					<template #prefix>
@@ -78,20 +77,8 @@ const handleSubmit = async () => {
 			</a-form-item>
 		</a-form>
 
-		<div class="absolute bottom-24px left-0 w-full text-center text-sm text-black/45 dark:text-white/45">
+		<div class="absolute bottom-6 left-0 w-full text-center text-sm text-black/45 dark:text-white/45">
 			{{ copyright }}
 		</div>
 	</div>
 </template>
-
-<style scoped>
-.login-container {
-	min-height: 100vh;
-	transition: background-color 0.3s ease;
-}
-
-/* 暗黑模式下隐藏背景图片，使用纯色背景 */
-:global(.dark) .login-container {
-	background-image: none !important;
-}
-</style>
